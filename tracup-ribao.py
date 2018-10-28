@@ -27,25 +27,26 @@ all_issues = list(flatten(all_issues))
 
 all_projet_module = t.get_project_modules(p_key)['list']
 
-#项目模块名称列表
+# 项目模块名称列表
 project_modules = [i['projectModuleName'] for i in all_projet_module]
 
 
 for module in project_modules:
-    
+
     issue_status_type = []
     project_result = []
-    
+
     # 取到各个模块下的问题列表
     for issue in all_issues:
         if issue['list'] == None:
-           continue
+            continue
 
         for q in issue['list']:
             if q['issueModule'] == module:
                 # issue_status_type.append('{},{}'.format(q.get('issueStatusText', []), q.get('issueType', [])))
-                issue_status_type.append('{},{},{}'.format(module,q.get('issueStatusText', []), q.get('issueType', [])))
+                issue_status_type.append('{},{},{}'.format(
+                    module, q.get('issueStatusText', []), q.get('issueType', [])))
 
-    project_result = Counter(issue_status_type)
+        project_result = Counter(issue_status_type)
     pprint(project_result)
-    pprint(issue_status_type)
+    # pprint(issue_status_type)
