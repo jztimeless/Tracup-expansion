@@ -115,6 +115,13 @@ class TracupSDK(object):
         }
         return self.__request('/apiv1/issue/view', data)
 
+    def get_all_project(self):
+        data = {
+            '_api_key': self.__api_key,
+            'ukey': self.__user_key
+        }
+        return self.__request('/apiv1/project/getAllProjectList', data)
+
 
 if __name__ == '__main__':
     sdk = TracupSDK(
