@@ -94,15 +94,17 @@ class TracupSDK(object):
         return self.__request('/apiv1/project/getProjectTypeList', data)
 
     # 项目问题列表
-    def get_qestion_list(self, p_key, status, sort_name='i_no', sort='desc'):
+    def get_qestion_list(self, p_key, status, page,sort_name='i_no', sort='desc'):
         data = {
             '_api_key': self.__api_key,
             'uKey': self.__user_key,
             'pKey': p_key,
             'sortName': sort_name,
             'sort': sort,
-            'status': status
+            'status': status,
+            'page': page
         }
+        
         return self.__request('/apiv1/issue/listIssue', data)
 
     # 问题详情
@@ -121,6 +123,16 @@ class TracupSDK(object):
             'ukey': self.__user_key
         }
         return self.__request('/apiv1/project/getAllProjectList', data)
+
+    # 获取备注
+    def get_issue_comment(self,p_key,i_no):
+        data = {        
+            '_api_key': self.__api_key,
+            'uKey': self.__user_key,
+            'pKey': p_key,
+            'iNo': i_no
+        }
+        return self.__request('/apiv1/issue/getNoteList', data)
 
 
 if __name__ == '__main__':
