@@ -64,15 +64,15 @@ header_cell_format = wb.add_format({
     'border': 1
 })
 # 表头
-sheet.write(0, 0, '模块',header_cell_format)
-sheet.write(0, 1, '类型',header_cell_format)
-
-for status in project_question_status.get('status', []):
-    sheet.write(0, header_cursor, status['label'],header_cell_format)
-    header_cursor = header_cursor + 1
-after_sored_result = sorted(statistics.items(), key=lambda item: item[0])
+sheet.write(0, 0, '模块', header_cell_format)
+sheet.write(0, 1, '类型', header_cell_format)
 
 header_cursor = 2
+
+for status in project_question_status.get('status', []):
+    sheet.write(0, header_cursor, status['label'], header_cell_format)
+    header_cursor = header_cursor + 1
+after_sored_result = sorted(statistics.items(), key=lambda item: item[0])
 
 cell_format = wb.add_format({
     'align': 'center',
@@ -94,20 +94,21 @@ for item in after_sored_result:
     key, item = item
     module_name, status_name = key.split('.')
     module_list.append(module_name)
-    sheet.write(start_row_index, 0, module_name,cell_format)
-    sheet.write(start_row_index, 1, status_name,cell_format)
+    sheet.write(start_row_index, 0, module_name, cell_format)
+    sheet.write(start_row_index, 1, status_name, cell_format)
 
     for i, status in enumerate(project_question_status.get('status', [])):
         value = 0
         status_text = status['label']
         if status_text in item:
             value = item[status_text]
-        sheet.write(start_row_index, col_index + i, value,cell_format_value)
+        sheet.write(start_row_index, col_index + i, value, cell_format_value)
     start_row_index += 1
 
 # 合并单元格
 merge_first_row = 1
-after_sored_result1 = sorted(Counter(module_list).items(), key=lambda item: item[0])
+after_sored_result1 = sorted(
+    Counter(module_list).items(), key=lambda item: item[0])
 for value in after_sored_result1:
     module, value = value
     if value < 2:

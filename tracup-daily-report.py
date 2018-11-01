@@ -77,53 +77,53 @@ start_row_index = 1
 col_index = 1
 summary = {}
 
-for item in after_sored_result:
-    key, item = item
-    module_name, status_name = key.split('.')
-    sheet.write(start_row_index, 0, module_name)
-    sheet.write(start_row_index, 1, status_name)
+# for item in after_sored_result:
+#     key, item = item
+#     module_name, status_name = key.split('.')
+#     sheet.write(start_row_index, 0, module_name)
+#     sheet.write(start_row_index, 1, status_name)
 
-    for i, status in enumerate(project_question_status.get('status', [])):
-        value = 0
-        status_text = status['label']
-        if status_text in item:
-            value = item[status_text]
-        sheet.write(start_row_index, col_index + i, value)
-    start_row_index += 1
-
-wb.close()
-
-# # 生成表格内容
-# len_list = len(result)
-# module_list = []
-
-# for i in range(len_list):
-#     print(u'正在写入第'+str(i+1)+u'行……')
-#     row_value = result[i]
-#     module_list.append(row_value[0])
-
-#     len_row = len(row_value)
-#     for j in range(len_row):
-#         sheet.write(start_row_index, col_index + i, row_value[j])
+#     for i, status in enumerate(project_question_status.get('status', [])):
+#         value = 0
+#         status_text = status['label']
+#         if status_text in item:
+#             value = item[status_text]
+#         sheet.write(start_row_index, col_index + i, value)
 #     start_row_index += 1
 
-# merge_first_row = 1
-
-# cell_format = wb.add_format({
-#     'align': 'center',
-#     'valign': 'vcenter',
-#     'bold': True,
-#     'bg_color': 'yellow',
-#     'border': 1
-# })
-
-# for key, value in Counter(module_list).items():
-#     if value < 2:
-#         sheet.write(merge_first_row + value - 1, 0, key, cell_format)
-#         continue
-#     end_row = merge_first_row + value - 1
-#     sheet.merge_range(merge_first_row, 0, end_row, 0, key, cell_format)
-#     merge_first_row = end_row + 1
-
 # wb.close()
-# print(u'写入完毕，excel文件已生成！')
+
+# 生成表格内容
+len_list = len(result)
+module_list = []
+
+for i in range(len_list):
+    print(u'正在写入第'+str(i+1)+u'行……')
+    row_value = result[i]
+    module_list.append(row_value[0])
+
+    len_row = len(row_value)
+    for j in range(len_row):
+        sheet.write(start_row_index, col_index + i, row_value[j])
+    start_row_index += 1
+
+merge_first_row = 1
+
+cell_format = wb.add_format({
+    'align': 'center',
+    'valign': 'vcenter',
+    'bold': True,
+    'bg_color': 'yellow',
+    'border': 1
+})
+
+for key, value in Counter(module_list).items():
+    if value < 2:
+        sheet.write(merge_first_row + value - 1, 0, key, cell_format)
+        continue
+    end_row = merge_first_row + value - 1
+    sheet.merge_range(merge_first_row, 0, end_row, 0, key, cell_format)
+    merge_first_row = end_row + 1
+
+wb.close()
+print(u'写入完毕，excel文件已生成！')

@@ -104,7 +104,7 @@ class TracupSDK(object):
             'status': status,
             'page': page
         }
-        
+        # page = (i for i in range(1,9))
         return self.__request('/apiv1/issue/listIssue', data)
 
     # 问题详情

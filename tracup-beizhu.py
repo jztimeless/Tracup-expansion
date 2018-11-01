@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import requests
 import json
 import csv
 import re
@@ -10,11 +9,11 @@ from tracup import TracupSDK
 u_key = '414a471ef24654e6b8413416a5048238'
 api_key = '6e238511179b6aeadf1e26fed1f6db07'
 p_key = 'a6a5891ca82e0ff3b60a2c1fba3cfc98'
-
 sdk = TracupSDK(api_key, u_key)
 
-
 # 接下来定义一个函数用来过滤HTML标签
+
+
 def filter_html(content):
     pat = re.compile('(?<=\>).*?(?=\<)')
     after_filter_contents = pat.findall(content)
@@ -24,14 +23,14 @@ def filter_html(content):
 # 获得问题所有状态的key
 issueStatus = sdk.get_qestion_status(p_key)
 status_key = [i['key'] for i in issueStatus.get('status', [])]
-
 all_issues = []
 
 for s in status_key:
-    result = sdk.get_qestion_list(p_key, s)
-    if result['list'] is None:
-        continue
-    all_issues = all_issues + result['list']
+    for page in range(1, 9):
+        result = sdk.get_qestion_list(p_key, s, page)
+        if result['list'] is None:
+            continue
+        all_issues = all_issues + result['list']
 
 issueNo = []  # 项目全部问题的issuekey
 
@@ -59,15 +58,13 @@ for q in all_issues:
     q['issue_final_comment'] = '\r\n'.join(issue_note_list)
     pprint('正在载入%s' % (q['issueNo']))
 
-# 完成后把所有的问题打印出来看看
-# 用带格式的打印 pprint = pretty print 是一中带格式的打印，看起来更好看
-# pprint(all_issues)
-
 tittle = sorted(all_issues[0].keys())  # 获取所有列名
 
-with open('tracup.csv', 'w', newline='') as csvFile:
-    # 标头在这里传入，作为第一行数据
-    writer = csv.DictWriter(csvFile, tittle)
-    writer.writeheader()
-    # 还可以写入多行
-    writer.writerows(all_issues)
+pprint(all_issues)
+
+# with open('tracup.csv', 'w', newline='') as csvFile:
+#     # 表头在这里传入，作为第一行数据
+#     writer = csv.DictWriter(csvFile, tittle)
+#     writer.writeheader()
+#     # 还可以写入多行
+#     writer.writerows(all_issues)
