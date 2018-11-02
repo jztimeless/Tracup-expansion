@@ -1,8 +1,12 @@
 from tracup import TracupSDK
 from pprint import pprint
 import xlsxwriter
+import xlrd
 import datetime
+import numpy as np 
+import pandas as pd
 from collections import Counter
+from xlsxwriter.utility import xl_rowcol_to_cell
 
 u_key = '414a471ef24654e6b8413416a5048238'
 api_key = '6e238511179b6aeadf1e26fed1f6db07'
@@ -25,11 +29,11 @@ exist_project = all_project[project_seleced]
 p_key = exist_project.get('projectKey', '')
 p_name = exist_project.get('projectName', '')
 
-project_question_status = sdk.get_qestion_status(p_key)
+project_question_status = sdk.get_qestion_status(p_key)['status']
 # print(project_question_status)
 
 all_issues = []
-for status in project_question_status['status']:
+for status in project_question_status:
     status_questions = sdk.get_qestion_list(p_key, status.get('key'))
     if status_questions is None:
         continue
@@ -67,7 +71,7 @@ sheet.write(0, 1, '类型', header_cell_format)
 
 header_cursor = 2
 
-for status in project_question_status.get('status', []):
+for status in project_question_status:
     sheet.write(0, header_cursor, status['label'], header_cell_format)
     header_cursor = header_cursor + 1
 after_sored_result = sorted(statistics.items(), key=lambda item: item[0])
@@ -95,7 +99,7 @@ for item in after_sored_result:
     sheet.write(start_row_index, 0, module_name, cell_format)
     sheet.write(start_row_index, 1, status_name, cell_format)
 
-    for i, status in enumerate(project_question_status.get('status', [])):
+    for i, status in enumerate(project_question_status):
         value = 0
         status_text = status['label']
         if status_text in item:
@@ -115,5 +119,21 @@ for value in after_sored_result1:
     end_row = merge_first_row + value - 1
     sheet.merge_range(merge_first_row, 0, end_row, 0, module, cell_format)
     merge_first_row = end_row + 1
+weizhi_col = len(project_question_status) + 2
+weizhi_row = 0
+sheet.write(weizhi_row,weizhi_col,'汇总')
+sheet.write(weizhi_row,weizhi_col+1,'模块BUG总数')
 
+while True:
+    if weizhi_row == len(statistics):
+        break  
+    cell_begin = xl_rowcol_to_cell(weizhi_row+1, 3)
+    cell_end = xl_rowcol_to_cell(weizhi_row+1, weizhi_col)
+    weizhi_row = weizhi_row + 1
 wb.close()
+
+df = xlrd.open_workbook(filename)
+table = df.sheet_by_name(u'sheet1')
+
+
+print(sum(table.row_valus(2)))
