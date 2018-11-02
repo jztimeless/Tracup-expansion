@@ -2,6 +2,7 @@ import requests
 import logging
 from pprint import pprint
 
+
 def flatten(a):
     for each in a:
         if not isinstance(each, list):
@@ -21,7 +22,8 @@ class TracupSDK(object):
         self.__logger.setLevel(logging.DEBUG)
         handler = logging.FileHandler('./logs/requests.log')
         handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         self.__logger.addHandler(handler)
 
@@ -94,18 +96,27 @@ class TracupSDK(object):
         return self.__request('/apiv1/project/getProjectTypeList', data)
 
     # 项目问题列表
-    def get_qestion_list(self, p_key, status, page,sort_name='i_no', sort='desc'):
-        data = {
-            '_api_key': self.__api_key,
-            'uKey': self.__user_key,
-            'pKey': p_key,
-            'sortName': sort_name,
-            'sort': sort,
-            'status': status,
-            'page': page
-        }
-        # page = (i for i in range(1,9))
-        return self.__request('/apiv1/issue/listIssue', data)
+
+    def get_qestion_list(self, p_key, status, sort_name='i_no', sort='desc'):
+        page = 1
+        all_issues = []
+        while True:
+            data = {
+                '_api_key': self.__api_key,
+                'uKey': self.__user_key,
+                'pKey': p_key,
+                'sortName': sort_name,
+                'sort': sort,
+                'status': status,
+                'page':page
+            }
+            result = self.__request('/apiv1/issue/listIssue', data)
+            issues = result['list']
+            if issues is None:
+                break
+            all_issues = all_issues + issues
+            page = page + 1
+        return all_issues 
 
     # 问题详情
     def get_question(self, p_key, i_no):
@@ -125,8 +136,8 @@ class TracupSDK(object):
         return self.__request('/apiv1/project/getAllProjectList', data)
 
     # 获取备注
-    def get_issue_comment(self,p_key,i_no):
-        data = {        
+    def get_issue_comment(self, p_key, i_no):
+        data = {
             '_api_key': self.__api_key,
             'uKey': self.__user_key,
             'pKey': p_key,
@@ -140,4 +151,4 @@ if __name__ == '__main__':
         '6e238511179b6aeadf1e26fed1f6db07',
         '414a471ef24654e6b8413416a5048238'
     )
-    sdk.get_project_modules('9df58763ae346255c4f3667bd8adf5bb')
+    sdk.get_project_modules('9df58763ae346255c4f3667bd8adf5bb','8ddc46d5aab32b4f18dedab6efffdc63')

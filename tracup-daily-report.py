@@ -19,12 +19,11 @@ status_key = [i['key'] for i in issueStatus['status']]
 # 获取所有问题列表
 all_issues = []
 for status in status_key:
-    for page_no in (1,2):
-        issues = t.get_qestion_list(p_key,status,page_no)
-        if issues['list'] is None:
-            continue
+    issues = t.get_qestion_list(p_key,status)
+    if issues is None:
+        continue
 
-        all_issues = all_issues + issues['list']
+    all_issues = all_issues + issues
 
 # 取到全部模块、状态类型
 issue_module_type = []
@@ -50,7 +49,6 @@ for issue1 in issue_module_type:
     prefix = issue1[0:2]
     for b in project_status['status']:
         prefix.append(issue1.count(b['label']))
-        # issue1 = issue1.count(b['projectTypeName'])
     result.append(prefix)
 
 wb = xlsxwriter.Workbook('tracup.xlsx')

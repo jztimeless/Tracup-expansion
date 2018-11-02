@@ -25,12 +25,12 @@ issueStatus = sdk.get_qestion_status(p_key)
 status_key = [i['key'] for i in issueStatus.get('status', [])]
 all_issues = []
 
-for s in status_key:
-    for page in range(1, 9):
-        result = sdk.get_qestion_list(p_key, s, page)
-        if result['list'] is None:
-            continue
-        all_issues = all_issues + result['list']
+for status in status_key:
+    issues = sdk.get_qestion_list(p_key, status)
+    if issues is None:
+        continue
+
+    all_issues = all_issues + issues
 
 issueNo = []  # 项目全部问题的issuekey
 
@@ -62,9 +62,9 @@ tittle = sorted(all_issues[0].keys())  # 获取所有列名
 
 pprint(all_issues)
 
-# with open('tracup.csv', 'w', newline='') as csvFile:
-#     # 表头在这里传入，作为第一行数据
-#     writer = csv.DictWriter(csvFile, tittle)
-#     writer.writeheader()
-#     # 还可以写入多行
-#     writer.writerows(all_issues)
+with open('tracup.csv', 'w', newline='') as csvFile:
+    # 表头在这里传入，作为第一行数据
+    writer = csv.DictWriter(csvFile, tittle)
+    writer.writeheader()
+    # 还可以写入多行
+    writer.writerows(all_issues)

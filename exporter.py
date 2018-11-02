@@ -30,12 +30,10 @@ project_question_status = sdk.get_qestion_status(p_key)
 
 all_issues = []
 for status in project_question_status['status']:
-    for page_no in range(1, 9):
-        status_questions = sdk.get_qestion_list(
-            p_key, status.get('key'), page_no)
-        if not status_questions or status_questions['list'] is None:
-            continue
-        all_issues = all_issues + status_questions.get('list', [])
+    status_questions = sdk.get_qestion_list(p_key, status.get('key'))
+    if status_questions is None:
+        continue
+    all_issues = all_issues + status_questions
 
 statistics = {}
 for issue in all_issues:
